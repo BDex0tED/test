@@ -2,9 +2,11 @@ package com.manas.model.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 
+@Builder
 public record TransferRequest(
         @NotNull(message = "Sent amount shouldn't be null")
         @Positive(message = "Sent amount should be greater that zero")
