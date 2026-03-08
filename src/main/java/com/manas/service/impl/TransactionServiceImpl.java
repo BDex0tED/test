@@ -25,11 +25,18 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
     private final BalanceRepo balanceRepo;
+    private final TransactionRepo transactionRepo;
     private final TransactionLogger tLogger;
 
     @Transactional
     @Override
-    public TransferResponse transfer(TransferRequest transferRequest) {
+    public TransferResponse transfer(TransferRequest transferRequest, String idempotencyKey) {
+
+        if(transactionRepo.existsByIdempotencyKey(idempotencyKey)){
+            Transaction tx = transactionRepo.findByIdempotencyKey(idempotencyKey);
+            return new TransferResponse(tx.getStatus(), tx.getCreatedAt());
+        }
+
         Balance fromBalance = balanceRepo.findBalanceWithLock(transferRequest.fromBalanceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Balance with id: " + transferRequest.fromBalanceId() + " not found"));
 

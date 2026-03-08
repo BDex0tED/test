@@ -31,6 +31,10 @@ public class Transaction {
     @ToString.Include
     private BigDecimal amount;
 
+    @Column(name = "idempotency_key", unique = true)
+    @ToString.Include
+    private String idempotencyKey;
+
     @Enumerated(value = EnumType.STRING)
     private TransactionStatus status;
 
